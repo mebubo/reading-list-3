@@ -4,7 +4,7 @@ from pydantic import BaseModel
 import aiosql
 import aiosqlite
 
-from models import PageHighlight, PageSavesReponse, SavesCount
+from models import PageHighlight, PageHighlights, PageSavesReponse, SavesCount
 import store
 
 app = FastAPI()
@@ -22,6 +22,10 @@ async def get_db():
 @app.get("/api/highlights", response_model=list[PageHighlight])
 async def get_highlights(url: str, conn = Depends(get_db)):
     return await store.highlights_for_url(conn, url)
+
+@app.get("/api/highlights_all", response_model=list[PageHighlights])
+async def get_highlights_all(conn = Depends(get_db)):
+    return await store.get_all_highlights(conn)
 
 class HighlightRequest(BaseModel):
     url: str

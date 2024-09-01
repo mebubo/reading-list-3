@@ -1,6 +1,9 @@
+from datetime import datetime
+import json
 import aiosqlite
+from pydantic import BaseModel
 
-from models import PageHighlight
+from models import Highlight, PageHighlight, PageHighlights
 
 QUERY_GET_HIGHLIGHTS = """
     select h.id, h.highlight, h.highlightText from PageHighlights h join Page p on h.pageId = p.id where p.url = ?
@@ -26,3 +29,33 @@ async def save_highlight(conn: aiosqlite.Connection, url: str, title: str, highl
         result = cursor.lastrowid
     await conn.commit()
     return result
+
+
+QUERY_GET_ALL_HIGHLIGHTS = """
+    SELECT p.url, p.title, json_group_array(json_object(
+        'id', h.id,
+        'savedAt', h.savedAt,
+        'highlight', h.highlight,
+        'highlightText', h.highlightText
+    )) as highlights
+    FROM PageHighlights h
+    JOIN Page p ON h.pageId = p.id
+    GROUP BY p.url, p.title
+"""
+
+async def get_all_highlights(conn: aiosqlite.Connection) -> list[PageHighlights]:
+    async with conn.execute(QUERY_GET_ALL_HIGHLIGHTS) as cursor:
+        rows = await cursor.fetchall()
+
+    pages = []
+    for row in rows:
+        url, title, highlights_json = row
+        highlights = json.loads(highlights_json)
+        page = PageHighlights(
+            url=url,
+            title=title,
+            highlights=[Highlight(**highlight) for highlight in highlights]
+        )
+        pages.append(page)
+
+    return pages
