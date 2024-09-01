@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import aiosql
 import aiosqlite
@@ -34,3 +35,6 @@ async def save_highlight(request: HighlightRequest, conn = Depends(get_db)):
 @app.get("/api/saves", response_model=PageSavesReponse)
 async def get_page_saves(url: str):
     return PageSavesReponse(message=url, details=SavesCount(savesCount=5))
+
+# serve frontend/public/standalone on /
+app.mount("/", StaticFiles(directory="frontend/public/standalone", html=True))
