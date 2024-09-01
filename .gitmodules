@@ -1,0 +1,3 @@
+[submodule "frontend/hypothesis-highlighter"]
+	path = frontend/hypothesis-highlighter
+	url = git@github.com:mebubo/hypothesis-highlighter.git
