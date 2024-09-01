@@ -1,3 +1,5 @@
+import { Guest } from "../hypothesis-highlighter/annotator/guest"
+
 const guest = new Guest(document.body)
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
