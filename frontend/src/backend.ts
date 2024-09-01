@@ -1,7 +1,7 @@
 const saves = "http://localhost:3000/api/saves"
 const highlights = "http://localhost:3000/api/highlights"
 
-export async function saveTab(tab) {
+export async function saveTab(tab: chrome.tabs.Tab) {
     console.log("Saving tab", tab)
     return await fetch(saves, {
         method: "POST",
@@ -16,7 +16,7 @@ export async function saveTab(tab) {
     })
 }
 
-export async function getSavesCount(url) {
+export async function getSavesCount(url: string) {
     console.log('fetching saves count for', url)
     const response = await fetch(`${saves}?url=${encodeURIComponent(url)}`)
     console.log('response', response)
@@ -25,7 +25,7 @@ export async function getSavesCount(url) {
     return json.details.savesCount
 }
 
-export async function saveHighlight(tab, highlight) {
+export async function saveHighlight(tab: chrome.tabs.Tab, highlight) {
     console.log("Saving highlight", tab, highlight)
     return await fetch(highlights, {
         method: "POST",
@@ -35,7 +35,7 @@ export async function saveHighlight(tab, highlight) {
         body: JSON.stringify({
             title: tab.title,
             url: tab.url,
-            highlight
+            highlight: JSON.stringify(highlight)
         })
     })
 }
@@ -46,5 +46,5 @@ export async function getHighlights(url) {
     console.log('response', response)
     const json = await response.json()
     console.log('json', json)
-    return json.details.highlights
+    return json
 }

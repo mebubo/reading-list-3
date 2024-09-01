@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
 async function applyHighlights() {
     const highlights = await chrome.runtime.sendMessage({type: "get-page-highlights"})
-    hls = (highlights ?? []).map(h => JSON.parse(h.highlight))
+    const hls = (highlights ?? []).map(h => JSON.parse(h.highlight))
     console.log("Applying highlights:", hls)
     guest.loadAnnotations(hls)
 }

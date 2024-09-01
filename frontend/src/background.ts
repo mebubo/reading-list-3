@@ -1,11 +1,11 @@
-import { saveTab, getSavesCount, saveHighlight, getHighlights } from "./backend.js"
-import { getCurrentTab } from "./tabs.js"
+import { saveTab, getSavesCount, saveHighlight, getHighlights } from "./backend"
+import { getCurrentTab } from "./tabs"
 
 chrome.runtime.onInstalled.addListener(({reason}) => {
     console.log("onInstalled", reason)
 })
 
-async function updateBadge(tab) {
+async function updateBadge(tab: chrome.tabs.Tab) {
     const savesCount = await getSavesCount(tab.url)
     chrome.action.setBadgeText({
       text: `${savesCount}`,
